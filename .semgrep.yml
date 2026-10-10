@@ -1,0 +1,37 @@
+rules:
+  - id: dangerous-eval-ast
+    languages: [python]
+    message: "Use of eval() detected. This allows arbitrary code execution and violates Hermes Section 4 & 14A security gates."
+    severity: ERROR
+    patterns:
+      - pattern: eval(...)
+
+  - id: dangerous-subprocess-shell-true
+    languages: [python]
+    message: "subprocess call with shell=True detected. This introduces remote code execution and command injection vulnerabilities."
+    severity: ERROR
+    patterns:
+      - pattern: subprocess.$FUNC(..., shell=True, ...)
+
+  - id: hardcoded-secret-token
+    languages: [python]
+    message: "Potential hardcoded bot token or secret credential detected. Secrets must be loaded strictly from environment variables."
+    severity: ERROR
+    patterns:
+      - pattern-regex: '(?i)(bot[0-9]{8,10}:[a-zA-Z0-9_-]{35}|ghp_[a-zA-Z0-9]{36}|sk-[a-zA-Z0-9]{48})'
+
+  - id: unsafe-yaml-load
+    languages: [python]
+    message: "Unsafe yaml.load() detected. Always use yaml.safe_load() to prevent arbitrary object instantiation."
+    severity: ERROR
+    patterns:
+      - pattern: yaml.load(...)
+      - pattern-not: yaml.safe_load(...)
+
+  - id: sql-raw-formatting-injection
+    languages: [python]
+    message: "Potential SQL injection via raw f-string or string formatting inside SQL execute(). Use parameterized queries."
+    severity: WARNING
+    patterns:
+      - pattern: $CONN.execute(f"...", ...)
+      - pattern-not: $CONN.execute(text("..."), ...)

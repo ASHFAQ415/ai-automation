@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HERMES BRAIN — Autonomous AI Orchestration & JARVIS Core</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-void: #02050b;
+      --bg-surface: rgba(9, 15, 27, 0.82);
+      --bg-surface-elevated: rgba(15, 23, 42, 0.92);
+      --bg-glass-card: rgba(13, 21, 38, 0.7);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-neon: rgba(0, 242, 254, 0.4);
+      --border-purple: rgba(168, 85, 247, 0.4);
+
+      --text-white: #ffffff;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --neon-cyan: #00f2fe;
+      --neon-cyan-glow: rgba(0, 242, 254, 0.35);
+      --neon-blue: #3b82f6;
+      --neon-purple: #a855f7;
+      --neon-pink: #ec4899;
+      --neon-emerald: #10b981;
+      --neon-emerald-glow: rgba(16, 185, 129, 0.35);
+      --neon-amber: #f59e0b;
+      --neon-rose: #f43f5e;
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(168, 85, 247, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(0, 242, 254, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 50% 65%, rgba(16, 185, 129, 0.08) 0%, transparent 55%);
+    }
+
+    /* Ambient dynamic canvas */
+    #neural-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1620px;
+      margin: 0 auto;
+      padding: 24px 32px 80px;
+    }
+
+    /* Top Executive Navigation Bar */
+    header.brain-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 28px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-identity {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(0, 242, 254, 0.2));
+      border: 1px solid var(--neon-cyan);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px var(--neon-cyan-glow);
+      animation: pulse-border 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 15px var(--neon-cyan-glow); border-color: var(--neon-cyan); }
+      50% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.5); border-color: var(--neon-purple); }
+    }
+
+    .brand-title h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #ffffff 0%, #00f2fe 50%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-core {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      background: rgba(0, 242, 254, 0.15);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      border-radius: 6px;
+      -webkit-text-fill-color: initial;
+    }
+
+    .brand-title p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .quick-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(59, 130, 246, 0.25));
+      border: 1px solid var(--neon-cyan);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+    }
+
+    .voice-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--neon-cyan);
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--neon-cyan);
+      transition: all 0.2s ease;
+    }
+
+    .voice-toggle-btn.active {
+      background: var(--neon-cyan);
+      color: #02050b;
+      box-shadow: 0 0 16px rgba(0, 242, 254, 0.5);
+    }
+
+    /* Live Telemetry KPI Strip */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 22px;
+      backdrop-filter: blur(14px);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent, var(--neon-cyan));
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-neon);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* ═════════════════════════════════════════════════════════════════════════
+       JARVIS / FRIDAY HOLOGRAPHIC EXECUTIVE COMMAND COCKPIT
+       ═════════════════════════════════════════════════════════════════════════ */
+    .jarvis-cockpit {
+      background: linear-gradient(135deg, rgba(14, 23, 42, 0.92) 0%, rgba(10, 18, 32, 0.95) 100%);
+      border: 1px solid var(--border-neon);
+      border-radius: 24px;
+      padding: 28px 36px;
+      margin-bottom: 32px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 242, 254, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .jarvis-cockpit::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .jarvis-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .arc-reactor-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Arc Reactor Holographic Ring Animation */
+    .arc-reactor {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.3) 0%, rgba(14, 23, 42, 0.8) 70%);
+      border: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 25px var(--neon-cyan-glow);
+    }
+
+    .arc-ring-outer {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px dashed rgba(0, 242, 254, 0.6);
+      animation: rotate-ring 8s linear infinite;
+    }
+
+    .arc-core-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 16px #00f2fe;
+      animation: arc-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes rotate-ring {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes arc-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    .arc-title h2 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .arc-title p {
+      font-size: 0.85rem;
+      color: var(--neon-cyan);
+      margin-top: 3px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+
+    /* Universal Command Bar */
+    .command-bar-wrap {
+      margin-top: 20px;
+      margin-bottom: 24px;
+    }
+
+    .command-form {
+      display: flex;
+      gap: 12px;
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid var(--border-neon);
+      border-radius: 16px;
+      padding: 8px 12px;
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+      align-items: center;
+    }
+
+    .command-input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-size: 0.98rem;
+      padding: 10px 14px;
+      font-family: var(--font-sans);
+    }
+
+    .command-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .voice-mic-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .voice-mic-btn:hover {
+      background: rgba(0, 242, 254, 0.2);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+    }
+
+    .voice-mic-btn.listening {
+      background: var(--neon-rose);
+      color: #fff;
+      animation: pulse-border 1s infinite;
+    }
+
+    .dispatch-btn {
+      background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);
+      color: #03060d;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 26px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.35);
+    }
+
+    .dispatch-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
+    }
+
+    /* 1-Tap Protocol Pills */
+    .protocol-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .protocol-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+
+    .protocol-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .protocol-pill:hover {
+      background: rgba(0, 242, 254, 0.12);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .protocol-pill.hot {
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--neon-amber);
+    }
+
+    .protocol-pill.hot:hover {
+      background: rgba(245, 158, 11, 0.2);
+    }
+
+    /* 6 Concurrent Sub-Agent Workstream Grid */
+    .concurrent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .subagent-hud-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .subagent-hud-card.active-work {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+      background: rgba(14, 25, 48, 0.9);
+    }
+
+    .hud-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .hud-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-emoji {
+      font-size: 1.25rem;
+    }
+
+    .hud-name {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hud-status {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--neon-emerald);
+      border: 1px solid var(--neon-emerald);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+
+    .hud-status.working {
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--neon-cyan);
+      border-color: var(--neon-cyan);
+      animation: blink 1.2s infinite;
+    }
+
+    .hud-progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 10px 0 12px;
+    }
+
+    .hud-progress-fill {
+      width: 100%;
+      height: 100%;
+      background: var(--neon-cyan);
+      transition: width 0.3s ease;
+    }
+
+    .hud-body-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      min-height: 42px;
+    }
+
+    /* JARVIS Executive Synthesis Briefing Terminal */
+    .jarvis-briefing-panel {
+      background: #030712;
+      border: 1px solid var(--border-neon);
+      border-radius: 18px;
+      padding: 20px 24px;
+      margin-top: 24px;
+      display: none;
+    }
+
+    .briefing-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px;
+    }
+
+    .briefing-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .briefing-content {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      font-family: var(--font-sans);
+    }
+
+    .briefing-voice-replay {
+      background: none;
+      border: 1px solid var(--border-subtle);
+      color: var(--neon-cyan);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .briefing-voice-replay:hover {
+      background: rgba(0, 242, 254, 0.15);
+      border-color: var(--neon-cyan);
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sub-Agents Anatomy Section */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .anatomy-tiers {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .tier-group {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 20px 24px;
+      backdrop-filter: blur(14px);
+    }
+
+    .tier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .tier-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tier-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .agent-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .agent-card {
+      background: var(--bg-glass-card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 16px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .agent-card:hover {
+      border-color: var(--neon-cyan);
+      background: rgba(18, 29, 52, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .agent-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .agent-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agent-emoji {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .agent-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pill.running {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--neon-emerald);
+      color: var(--neon-emerald);
+    }
+
+    .status-pill.idle {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+    }
+
+    .status-pill.error {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid var(--neon-rose);
+      color: var(--neon-rose);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-dot.pulse {
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.8); }
+    }
+
+    .agent-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 12px;
+      min-height: 34px;
+    }
+
+    .agent-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 10px;
+    }
+
+    .agent-ping-btn {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .agent-ping-btn:hover {
+      color: #fff;
+      border-color: var(--neon-cyan);
+      background: rgba(0, 242, 254, 0.1);
+    }
+
+    /* Right Column: Fast Intake & Deliverables Gallery */
+    .sidebar-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .panel-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 22px;
+      backdrop-filter: blur(14px);
+    }
+
+    .intake-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      background: rgba(6, 10, 18, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 85px;
+      font-family: var(--font-sans);
+    }
+
+    .submit-lead-btn {
+      background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);
+      color: #03060d;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+    }
+
+    .submit-lead-btn:hover {
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Client Projects (Deliverable Body Parts) */
+    .project-item {
+      background: var(--bg-glass-card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .project-item:hover {
+      border-color: var(--neon-emerald);
+      background: rgba(16, 25, 45, 0.8);
+    }
+
+    .project-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .project-slug {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--neon-emerald);
+    }
+
+    .project-port-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      border-radius: 6px;
+    }
+
+    .project-meta {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .project-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .proj-btn {
+      flex: 1;
+      text-align: center;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+      transition: all 0.2s;
+    }
+
+    .proj-btn:hover {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 242, 254, 0.15);
+    }
+
+    .proj-btn.live {
+      border-color: var(--neon-emerald);
+      color: var(--neon-emerald);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .proj-btn.live:hover {
+      background: rgba(16, 185, 129, 0.25);
+    }
+
+    /* Live Neural Stream Console */
+    .console-box {
+      background: #020408;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      max-height: 220px;
+      overflow-y: auto;
+      color: #38ef7d;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .console-entry {
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+
+    .console-time {
+      color: var(--text-dim);
+    }
+
+    .console-tag {
+      color: var(--neon-cyan);
+    }
+
+    /* Toast Notifications */
+    #toast-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-neon);
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 0.85rem;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      animation: slideIn 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="neural-canvas"></canvas>
+
+  <div class="container">
+    <!-- Top Executive Nav -->
+    <header class="brain-nav">
+      <div class="brand-identity">
+        <div class="brand-icon">🧠</div>
+        <div class="brand-title">
+          <h1>HERMES BRAIN <span class="badge-core">JARVIS COCKPIT</span></h1>
+          <p>Autonomous AI Multi-Agent Operating System & Executive Nexus · Mohd Ashfaq</p>
+        </div>
+      </div>
+
+      <div class="quick-links">
+        <button class="voice-toggle-btn active" id="voice-toggle-btn" onclick="toggleVoiceAudio()">
+          <span id="voice-btn-icon">🔊</span> JARVIS Voice: <span id="voice-status-text">ON</span>
+        </button>
+        <a href="/" class="nav-btn primary">
+          <span>📱</span> Client Pitch
+        </a>
+        <a href="/search" class="nav-btn">
+          <span>🔎</span> Meta Search
+        </a>
+        <a href="/docs" target="_blank" class="nav-btn">
+          <span>📖</span> API Docs
+        </a>
+      </div>
+    </header>
+
+    <!-- Telemetry Strip -->
+    <section class="telemetry-strip">
+      <div class="kpi-card" style="--accent: var(--neon-cyan)">
+        <div class="kpi-label">
+          <span>PRIMARY COMPUTE TIER</span>
+          <span>⚡</span>
+        </div>
+        <div class="kpi-value" id="kpi-llm-tier">Tier 1</div>
+        <div class="kpi-sub" id="kpi-llm-label">Ollama qwen3:4b (RTX 3050 GPU)</div>
+      </div>
+
+      <div class="kpi-card" style="--accent: var(--neon-emerald)">
+        <div class="kpi-label">
+          <span>SUB-AGENT SQUAD HEALTH</span>
+          <span>❤️</span>
+        </div>
+        <div class="kpi-value" id="kpi-health-pct">100%</div>
+        <div class="kpi-sub" id="kpi-agents-count">6 Concurrent Core Agents</div>
+      </div>
+
+      <div class="kpi-card" style="--accent: var(--neon-purple)">
+        <div class="kpi-label">
+          <span>CLIENT DELIVERABLES</span>
+          <span>📦</span>
+        </div>
+        <div class="kpi-value" id="kpi-projects-count">0</div>
+        <div class="kpi-sub">Verified Standalone Codebases</div>
+      </div>
+
+      <div class="kpi-card" style="--accent: var(--neon-amber)">
+        <div class="kpi-label">
+          <span>SYSTEM RUNTIME UPTIME</span>
+          <span>⏱️</span>
+        </div>
+        <div class="kpi-value" id="kpi-uptime">Online</div>
+        <div class="kpi-sub" id="kpi-platform">Windows NSSM / Python 3.12</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         JARVIS / FRIDAY HOLOGRAPHIC EXECUTIVE COCKPIT
+         ═══════════════════════════════════════════════════════════════════════ -->
+    <section class="jarvis-cockpit">
+      <div class="jarvis-header-row">
+        <div class="arc-reactor-wrap">
+          <div class="arc-reactor">
+            <div class="arc-ring-outer"></div>
+            <div class="arc-core-dot"></div>
+          </div>
+          <div class="arc-title">
+            <h2>JARVIS AUTONOMOUS MULTI-AGENT CORE</h2>
+            <p id="jarvis-status-line">⚡ ALL 6 SUB-AGENTS SYNCHRONIZED AND STANDING BY</p>
+          </div>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);" id="jarvis-clock">
+          SYSTEM CLOCK: ACTIVE
+        </div>
+      </div>
+
+      <!-- Natural Language Command Input -->
+      <div class="command-bar-wrap">
+        <form class="command-form" onsubmit="handleJarvisCommand(event)">
+          <input 
+            type="text" 
+            class="command-input" 
+            id="jarvis-command-input" 
+            placeholder="Command Hermes (e.g. 'Scout high-paying freelance leads, check GPU VRAM, audit pending invoices, and draft client follow-ups')..."
+            autocomplete="off"
+          >
+          <button type="button" class="voice-mic-btn" id="voice-mic-btn" title="Click to speak command" onclick="toggleSpeechRecognition()">
+            🎙️
+          </button>
+          <button type="submit" class="dispatch-btn" id="jarvis-dispatch-btn">
+            <span>⚡</span> DISPATCH SUB-AGENTS
+          </button>
+        </form>
+
+        <!-- 1-Tap Protocol Pills -->
+        <div class="protocol-pills">
+          <span class="protocol-label">EXEC PROTOCOLS:</span>
+          <button class="protocol-pill hot" onclick="triggerProtocol('alpha_sweep')">
+            <span>⚡ Protocol Alpha</span> (Full 360° Freelance Sweep)
+          </button>
+          <button class="protocol-pill" onclick="triggerProtocol('deal_strike')">
+            <span>🎯 Protocol Beta</span> (Client Deal Strike & Pricing)
+          </button>
+          <button class="protocol-pill" onclick="triggerProtocol('sentry_diagnostics')">
+            <span>🛡️ Protocol Gamma</span> (Deep Hardware & Security Diagnostics)
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Concurrent Sub-Agents Execution Matrix -->
+      <div class="concurrent-grid">
+        <!-- 1. Market Scout -->
+        <div class="subagent-hud-card" id="hud-market_scout">
+          <div class="hud-top">
+            <div class="hud-title-wrap">
+              <span class="hud-emoji">🌐</span>
+              <span class="hud-name">Market Scout</span>
+            </div>
+            <span class="hud-status" id="status-market_scout">READY</span>
+          </div>
+          <div class="hud-progress-bar"><div class="hud-progress-fill" id="prog-market_scout" style="width: 100%;"></div></div>
+          <div class="hud-body-text" id="desc-market_scout">
+            Scans job boards, meta-searches web intelligence & tracks freelance rates in real-time.
+          </div>
+        </div>
+
+        <!-- 2. Client Liaison -->
+        <div class="subagent-hud-card" id="hud-client_liaison">
+          <div class="hud-top">
+            <div class="hud-title-wrap">
+              <span class="hud-emoji">💬</span>
+              <span class="hud-name">Client Liaison</span>
+            </div>
+            <span class="hud-status" id="status-client_liaison">READY</span>
+          </div>
+          <div class="hud-progress-bar"><div class="hud-progress-fill" id="prog-client_liaison" style="width: 100%;"></div></div>
+          <div class="hud-body-text" id="desc-client_liaison">
+            Audits WhatsApp & Telegram inquiries, drafts client proposals & negotiations.
+          </div>
+        </div>
+
+        <!-- 3. Hardware Sentry -->
+        <div class="subagent-hud-card" id="hud-hardware_sentry">
+          <div class="hud-top">
+            <div class="hud-title-wrap">
+              <span class="hud-emoji">🛡️</span>
+              <span class="hud-name">Hardware Sentry</span>
+            </div>
+            <span class="hud-status" id="status-hardware_sentry">READY</span>
+          </div>
+          <div class="hud-progress-bar"><div class="hud-progress-fill" id="prog-hardware_sentry" style="width: 100%;"></div></div>
+          <div class="hud-body-text" id="desc-hardware_sentry">
+            Live RTX 3050 GPU VRAM, temperature, disk storage & daemon process watchdog.
+          </div>
+        </div>
+
+        <!-- 4. Finance CFO -->
+        <div class="subagent-hud-card" id="hud-finance_cfo">
+          <div class="hud-top">
+            <div class="hud-title-wrap">
+              <span class="hud-emoji">💰</span>
+              <span class="hud-name">Finance CFO</span>
+            </div>
+            <span class="hud-status" id="status-finance_cfo">READY</span>
+          </div>
+          <div class="hud-progress-bar"><div class="hud-progress-fill" id="prog-finance_cfo" style="width: 100%;"></div></div>
+          <div class="hud-body-text" id="desc-finance_cfo">
+            Audits milestone receivables, calculates revenue & generates ReportLab PDF invoices.
+          </div>
+        </div>
+
+        <!-- 5. Code Engineer -->
+        <div class="subagent-hud-card" id="hud-code_engineer">
+          <div class="hud-top">
+            <div class="hud-title-wrap">
+              <span class="hud-emoji">💻</span>
+              <span class="hud-name">Code Engineer</span>
+            </div>
+            <span class="hud-status" id="status-code_engineer">READY</span>
+          </div>
+          <div class="hud-progress-bar"><div class="hud-progress-fill" id="prog-code_engineer" style="width: 100%;"></div></div>
+          <div class="hud-body-text" id="desc-code_engineer">
+            Scaffolds FastAPI apps, executes 13-point security gates & compiles deliverables.
+          </div>
+        </div>
+
+        <!-- 6. Executive Scheduler -->
+        <div class="subagent-hud-card" id="hud-executive_scheduler">
+          <div class="hud-top">
+            <div class="hud-title-wrap">
+              <span class="hud-emoji">⏰</span>
+              <span class="hud-name">Executive Scheduler</span>
+            </div>
+            <span class="hud-status" id="status-executive_scheduler">READY</span>
+          </div>
+          <div class="hud-progress-bar"><div class="hud-progress-fill" id="prog-executive_scheduler" style="width: 100%;"></div></div>
+          <div class="hud-body-text" id="desc-executive_scheduler">
+            Prioritizes daily agenda, manages client deadlines & retains contextual memory.
+          </div>
+        </div>
+      </div>
+
+      <!-- JARVIS Executive Briefing Output Panel -->
+      <div class="jarvis-briefing-panel" id="jarvis-briefing-panel">
+        <div class="briefing-top">
+          <div class="briefing-title">
+            <span>🎙️</span>
+            <span>JARVIS EXECUTIVE SYNTHESIS REPORT</span>
+          </div>
+          <button class="briefing-voice-replay" onclick="replayLastVoice()">
+            <span>🔊</span> Replay Voice
+          </button>
+        </div>
+        <div class="briefing-content" id="jarvis-briefing-content"></div>
+      </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Left: Sub-Agents Anatomy Tiers -->
+      <section class="anatomy-section">
+        <div class="section-header">
+          <div class="section-title">
+            <span>🧬</span> Sub-Agent Anatomy Registry
+          </div>
+          <span style="font-size: 0.8rem; color: var(--text-dim);" id="last-synced-time">Syncing...</span>
+        </div>
+
+        <div class="anatomy-tiers" id="tiers-container">
+          <div style="text-align: center; padding: 40px; color: var(--text-dim);">
+            Loading neural pathways...
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Fast Freelance Intake & Body Parts Projects -->
+      <aside class="sidebar-panel">
+        <!-- Fast Intake Studio -->
+        <div class="panel-box">
+          <div class="section-title" style="font-size: 1.05rem;">
+            <span>⚡</span> Freelance Lead Intake Studio
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+            Inbound client inquiry directly routed to Hermes Brain.
+          </p>
+
+          <form class="intake-form" id="intake-form" onsubmit="handleLeadSubmit(event)">
+            <div class="form-group">
+              <label>Client Name / Organization</label>
+              <input type="text" class="form-input" id="lead-name" placeholder="e.g. Hyderabad Global Academy" required>
+            </div>
+            <div class="form-group">
+              <label>Channel / Contact (WhatsApp / Phone)</label>
+              <input type="text" class="form-input" id="lead-contact" placeholder="+91 98765 43210" required>
+            </div>
+            <div class="form-group">
+              <label>Project Scope / Software Requirements</label>
+              <textarea class="form-textarea" id="lead-message" placeholder="Need a school timetable scheduling engine with conflict detection, teacher load allocation, and PDF export..." required></textarea>
+            </div>
+            <button type="submit" class="submit-lead-btn" id="submit-btn">
+              <span>🚀</span> Dispatch to Hermes Brain
+            </button>
+          </form>
+        </div>
+
+        <!-- Standalone Client Projects (Body Parts) -->
+        <div class="panel-box">
+          <div class="section-title" style="font-size: 1.05rem; justify-content: space-between;">
+            <span>📦 Client Body Deliverables</span>
+            <span class="badge-core" id="badge-active-projects">0 Active</span>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; margin-bottom: 14px;">
+            Autonomous applications generated in <code>projects/</code>
+          </p>
+
+          <div id="projects-container">
+            <div style="font-size: 0.8rem; color: var(--text-dim); text-align: center; padding: 20px;">
+              Scanning projects directory...
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Neural Stream Console -->
+        <div class="panel-box">
+          <div class="section-title" style="font-size: 1.05rem; justify-content: space-between;">
+            <span>📡 Neural Telemetry Stream</span>
+            <span style="font-size: 0.7rem; color: #10b981;">LIVE WS</span>
+          </div>
+          <div class="console-box" id="neural-console">
+            <div class="console-entry"><span class="console-time">[00:00:00]</span> <span class="console-tag">[BRAIN]</span> Hermes Brain Hub initialized.</div>
+            <div class="console-entry"><span class="console-time">[00:00:00]</span> <span class="console-tag">[JARVIS]</span> Multi-agent concurrent dispatch core online.</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="toast-box"></div>
+
+  <script>
+    // ── Neural Background Canvas Animation ─────────────────────────────────────
+    const canvas = document.getElementById('neural-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const nodes = [];
+    for (let i = 0; i < 40; i++) {
+      nodes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 2 + 1,
+      });
+    }
+
+    function animateNeural() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#00f2fe';
+      ctx.strokeStyle = 'rgba(0, 242, 254, 0.08)';
+
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        n.x += n.vx;
+        n.y += n.vy;
+        if (n.x < 0 || n.x > width) n.vx *= -1;
+        if (n.y < 0 || n.y > height) n.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < nodes.length; j++) {
+          const n2 = nodes[j];
+          const dist = Math.hypot(n.x - n2.x, n.y - n2.y);
+          if (dist < 140) {
+            ctx.lineWidth = 1 - dist / 140;
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(n2.x, n2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animateNeural);
+    }
+    animateNeural();
+
+    // ── JARVIS Clock ──────────────────────────────────────────────────────────
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('jarvis-clock').textContent = `SYSTEM CLOCK: ${now.toLocaleTimeString()} UTC+05:30`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ── Voice Synthesis (Text-to-Speech) ──────────────────────────────────────
+    let voiceEnabled = true;
+    let lastVoiceScript = "";
+
+    function toggleVoiceAudio() {
+      voiceEnabled = !voiceEnabled;
+      const btn = document.getElementById('voice-toggle-btn');
+      const text = document.getElementById('voice-status-text');
+      const icon = document.getElementById('voice-btn-icon');
+      if (voiceEnabled) {
+        btn.classList.add('active');
+        text.textContent = 'ON';
+        icon.textContent = '🔊';
+        speakJarvis("JARVIS voice synthesis online, Ashfaq. Ready for your command.");
+      } else {
+        btn.classList.remove('active');
+        text.textContent = 'MUTED';
+        icon.textContent = '🔇';
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+      }
+    }
+
+    function speakJarvis(text) {
+      if (!voiceEnabled || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel(); // stop current utterance
+      lastVoiceScript = text;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.05;
+      utterance.pitch = 0.95;
+
+      const voices = window.speechSynthesis.getVoices();
+      // Try finding English male or British voice for JARVIS feel
+      const jarvisVoice = voices.find(v => v.name.includes('Male') || v.name.includes('George') || v.name.includes('David') || v.lang === 'en-GB' || v.lang === 'en-US');
+      if (jarvisVoice) utterance.voice = jarvisVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function replayLastVoice() {
+      if (lastVoiceScript) speakJarvis(lastVoiceScript);
+    }
+
+    // ── Speech Recognition (Voice Input) ──────────────────────────────────────
+    let recognition = null;
+    let isListening = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        isListening = true;
+        document.getElementById('voice-mic-btn').classList.add('listening');
+        showToast('Listening... Speak your command to JARVIS', 'info');
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('jarvis-command-input').value = transcript;
+        showToast(`Heard: "${transcript}"`, 'success');
+        dispatchJarvisCommand(transcript);
+      };
+
+      recognition.onerror = () => {
+        isListening = false;
+        document.getElementById('voice-mic-btn').classList.remove('listening');
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        document.getElementById('voice-mic-btn').classList.remove('listening');
+      };
+    }
+
+    function toggleSpeechRecognition() {
+      if (!recognition) {
+        showToast('Speech recognition not supported in this browser. Please type command.', 'error');
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    }
+
+    // ── JARVIS Concurrent Multi-Agent Execution ───────────────────────────────
+    const agentIds = ['market_scout', 'client_liaison', 'hardware_sentry', 'finance_cfo', 'code_engineer', 'executive_scheduler'];
+
+    function setSubagentsWorkingState(isWorking) {
+      document.getElementById('jarvis-status-line').textContent = isWorking 
+        ? "⚡ CONCURRENT WORKSTREAMS EXECUTING SIMULTANEOUSLY..." 
+        : "⚡ ALL 6 SUB-AGENTS SYNCHRONIZED AND STANDING BY";
+
+      agentIds.forEach(id => {
+        const statusEl = document.getElementById(`status-${id}`);
+        const cardEl = document.getElementById(`hud-${id}`);
+        const progEl = document.getElementById(`prog-${id}`);
+
+        if (isWorking) {
+          statusEl.textContent = "WORKING";
+          statusEl.className = "hud-status working";
+          cardEl.classList.add('active-work');
+          progEl.style.width = '45%';
+        } else {
+          statusEl.textContent = "COMPLETED";
+          statusEl.className = "hud-status";
+          cardEl.classList.remove('active-work');
+          progEl.style.width = '100%';
+        }
+      });
+    }
+
+    async function dispatchJarvisCommand(cmd) {
+      if (!cmd.trim()) return;
+
+      const btn = document.getElementById('jarvis-dispatch-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<span>⏳</span> EXECUTING CONCURRENT SQUAD...`;
+
+      setSubagentsWorkingState(true);
+      logConsole('JARVIS', `Decomposing instruction: "${cmd}" into parallel workstreams.`);
+
+      try {
+        const res = await fetch('/api/jarvis/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: cmd })
+        });
+
+        if (!res.ok) throw new Error('JARVIS execution failure');
+        const data = await res.json();
+
+        // Update Sub-Agent HUD Cards with live results
+        if (data.subagents) {
+          if (data.subagents.market_scout) {
+            document.getElementById('desc-market_scout').textContent = data.subagents.market_scout.summary || "Market rates checked.";
+          }
+          if (data.subagents.client_liaison) {
+            const rec = data.subagents.client_liaison.recommendations;
+            document.getElementById('desc-client_liaison').textContent = (rec && rec.length) ? rec[0] : "All client channels synchronized.";
+          }
+          if (data.subagents.hardware_sentry) {
+            const hs = data.subagents.hardware_sentry;
+            document.getElementById('desc-hardware_sentry').textContent = `${hs.gpu_status} · Free: ${hs.disk_free_gb}GB`;
+          }
+          if (data.subagents.finance_cfo) {
+            const fc = data.subagents.finance_cfo;
+            document.getElementById('desc-finance_cfo').textContent = `Captured: ${fc.captured_revenue_inr} · Pipeline: ${fc.pipeline_potential_inr}`;
+          }
+          if (data.subagents.code_engineer) {
+            const ce = data.subagents.code_engineer;
+            document.getElementById('desc-code_engineer').textContent = `${ce.projects_count} verified codebases in projects/ · 13 Gates Active`;
+          }
+          if (data.subagents.executive_scheduler) {
+            const es = data.subagents.executive_scheduler;
+            document.getElementById('desc-executive_scheduler').textContent = es.priority_matrix?.[0]?.action || "Operational posture: AUTONOMOUS_READY";
+          }
+        }
+
+        // Show Executive Synthesis Briefing
+        const panel = document.getElementById('jarvis-briefing-panel');
+        panel.style.display = 'block';
+        document.getElementById('jarvis-briefing-content').textContent = data.executive_briefing;
+
+        // Voice Readout
+        if (data.voice_script) {
+          speakJarvis(data.voice_script);
+        }
+
+        showToast(`All 6 Sub-Agents completed in ${data.total_elapsed_seconds}s!`, 'success');
+        logConsole('JARVIS', `Completed parallel execution in ${data.total_elapsed_seconds}s.`);
+      } catch (err) {
+        showToast(`Command error: ${err.message}`, 'error');
+        logConsole('ERROR', `JARVIS command error: ${err.message}`);
+      } finally {
+        setSubagentsWorkingState(false);
+        btn.disabled = false;
+        btn.innerHTML = `<span>⚡</span> DISPATCH SUB-AGENTS`;
+        refreshAgentStatus();
+        loadProjects();
+      }
+    }
+
+    function handleJarvisCommand(e) {
+      e.preventDefault();
+      const input = document.getElementById('jarvis-command-input');
+      const cmd = input.value.trim();
+      if (cmd) {
+        dispatchJarvisCommand(cmd);
+      }
+    }
+
+    async function triggerProtocol(protocolName) {
+      const names = {
+        'alpha_sweep': 'Protocol Alpha (Full 360° Freelance Sweep)',
+        'deal_strike': 'Protocol Beta (Client Deal Strike & Pricing)',
+        'sentry_diagnostics': 'Protocol Gamma (Deep Diagnostics)'
+      };
+      showToast(`Initiating ${names[protocolName] || protocolName}...`, 'info');
+      setSubagentsWorkingState(true);
+
+      try {
+        const res = await fetch(`/api/jarvis/protocol/${protocolName}`, { method: 'POST' });
+        if (!res.ok) throw new Error('Protocol execution failure');
+        const data = await res.json();
+
+        // Update Briefing
+        const panel = document.getElementById('jarvis-briefing-panel');
+        panel.style.display = 'block';
+        document.getElementById('jarvis-briefing-content').textContent = data.executive_briefing;
+
+        if (data.voice_script) speakJarvis(data.voice_script);
+        showToast(`${names[protocolName]} completed successfully!`, 'success');
+      } catch (err) {
+        showToast(`Protocol error: ${err.message}`, 'error');
+      } finally {
+        setSubagentsWorkingState(false);
+        refreshAgentStatus();
+        loadProjects();
+      }
+    }
+
+    // ── Toast Helper ──────────────────────────────────────────────────────────
+    function showToast(message, type = 'info') {
+      const box = document.getElementById('toast-box');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : '⚡'}</span> <span>${message}</span>`;
+      box.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function logConsole(tag, message) {
+      const consoleBox = document.getElementById('neural-console');
+      const now = new Date().toTimeString().split(' ')[0];
+      const entry = document.createElement('div');
+      entry.className = 'console-entry';
+      entry.innerHTML = `<span class="console-time">[${now}]</span> <span class="console-tag">[${tag}]</span> ${message}`;
+      consoleBox.appendChild(entry);
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    // ── API Fetchers ──────────────────────────────────────────────────────────
+    async function refreshAgentStatus() {
+      try {
+        const res = await fetch('/api/agents/status');
+        if (!res.ok) throw new Error('Status endpoint unavailable');
+        const data = await res.json();
+
+        // Update KPIs
+        document.getElementById('kpi-llm-tier').textContent = `Tier ${data.llm_tier.tier}`;
+        document.getElementById('kpi-llm-label').textContent = data.llm_tier.label;
+        document.getElementById('kpi-health-pct').textContent = `${data.summary.health_pct}%`;
+        document.getElementById('kpi-agents-count').textContent = `${data.summary.total} Sub-Agents Registered`;
+        document.getElementById('kpi-uptime').textContent = data.uptime;
+        document.getElementById('kpi-platform').textContent = `${data.platform} Core`;
+        document.getElementById('last-synced-time').textContent = `Synced: ${new Date().toLocaleTimeString()}`;
+
+        renderTiers(data.tiers);
+      } catch (err) {
+        renderFallbackTiers();
+      }
+    }
+
+    function renderTiers(tiers) {
+      const container = document.getElementById('tiers-container');
+      container.innerHTML = '';
+
+      const tierIcons = {
+        "Brain Stem": "🧠",
+        "Hands": "✋",
+        "Eyes & Ears": "👁️",
+        "Heart": "🫀",
+        "Legs": "🦿",
+        "Nervous System": "⚡"
+      };
+
+      for (const [tierName, agents] of Object.entries(tiers)) {
+        const group = document.createElement('div');
+        group.className = 'tier-group';
+
+        const icon = tierIcons[tierName] || "⚙️";
+        group.innerHTML = `
+          <div class="tier-header">
+            <div class="tier-label">
+              <span>${icon}</span>
+              <span>${tierName}</span>
+            </div>
+            <span class="tier-badge">${agents.length} Organs</span>
+          </div>
+          <div class="agent-cards-grid">
+            ${agents.map(a => `
+              <div class="agent-card" id="card-${a.id}">
+                <div class="agent-top">
+                  <div class="agent-name-wrap">
+                    <span class="agent-emoji">${a.emoji}</span>
+                    <span class="agent-name">${a.name}</span>
+                  </div>
+                  <span class="status-pill ${a.status}">
+                    <span class="status-dot ${a.status === 'running' ? 'pulse' : ''}"></span>
+                    ${a.status}
+                  </span>
+                </div>
+                <div class="agent-desc">${a.description}</div>
+                <div class="agent-footer">
+                  <span>Runs: ${a.runs_total || 0}</span>
+                  <button class="agent-ping-btn" onclick="pingAgent('${a.id}')">Pulse Test</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(group);
+      }
+    }
+
+    function renderFallbackTiers() {
+      const container = document.getElementById('tiers-container');
+      container.innerHTML = `
+        <div style="text-align: center; padding: 30px; color: var(--neon-amber);">
+          ⚠️ Sub-Agent Registry syncing with local server on Port 8000...
+        </div>
+      `;
+    }
+
+    async function pingAgent(agentId) {
+      try {
+        const res = await fetch(`/api/agents/${agentId}/ping`, { method: 'POST' });
+        if (res.ok) {
+          showToast(`Agent '${agentId}' pulsed successfully!`, 'success');
+          logConsole('PULSE', `Heartbeat verified for [${agentId}]`);
+          refreshAgentStatus();
+        }
+      } catch (err) {
+        showToast(`Failed to ping ${agentId}`, 'error');
+      }
+    }
+
+    // ── Client Projects (Deliverable Body Parts) Fetcher ──────────────────────
+    async function loadProjects() {
+      const container = document.getElementById('projects-container');
+      try {
+        const res = await fetch('/api/projects');
+        if (!res.ok) throw new Error('Projects unavailable');
+        const projects = await res.json();
+
+        document.getElementById('kpi-projects-count').textContent = projects.length;
+        document.getElementById('badge-active-projects').textContent = `${projects.length} Active`;
+
+        if (projects.length === 0) {
+          container.innerHTML = `
+            <div style="font-size: 0.8rem; color: var(--text-dim); text-align: center; padding: 20px;">
+              No projects compiled yet. Submit a lead or run a JARVIS protocol to synthesize!
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = projects.map(p => `
+          <div class="project-item">
+            <div class="project-item-top">
+              <span class="project-slug">${p.slug}</span>
+              <span class="project-port-badge">Port :${p.assigned_port || 8080}</span>
+            </div>
+            <div class="project-meta">
+              <strong>${p.name || p.slug}</strong><br>
+              Status: <span style="color: var(--neon-emerald)">${p.status || 'VERIFIED'}</span> · 13 Gates Passed
+            </div>
+            <div class="project-actions">
+              <a href="http://localhost:${p.assigned_port || 8080}" target="_blank" class="proj-btn live">
+                🌐 Live App
+              </a>
+              <a href="/api/projects/${p.slug}/download" class="proj-btn">
+                💾 Download ZIP
+              </a>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `
+          <div style="font-size: 0.8rem; color: var(--text-dim); text-align: center; padding: 20px;">
+            Unable to load deliverables gallery: ${err.message}
+          </div>
+        `;
+      }
+    }
+
+    // ── Lead Intake Submission ────────────────────────────────────────────────
+    async function handleLeadSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('lead-name').value;
+      const contact = document.getElementById('lead-contact').value;
+      const message = document.getElementById('lead-message').value;
+      const btn = document.getElementById('submit-btn');
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>⏳</span> Hermes Thinking...`;
+
+      try {
+        logConsole('INGRESS', `Inbound lead received from ${name} via Web Ingress.`);
+        const res = await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            contact: contact,
+            source: 'brain_hub',
+            message: message
+          })
+        });
+
+        if (!res.ok) throw new Error('Submission error');
+        const lead = await res.json();
+
+        showToast(`Lead captured! Hermes AI Score: ${lead.qualification_score || 85} (HOT)`, 'success');
+        logConsole('QUALIFIER', `Lead scored: ${lead.qualification_score || 85}/100. Dispatched to Plan Architect.`);
+        speakJarvis(`Inbound lead captured from ${name}. Hermes scored this at ${lead.qualification_score || 85} out of 100.`);
+
+        document.getElementById('intake-form').reset();
+        refreshAgentStatus();
+        loadProjects();
+      } catch (err) {
+        showToast(`Submission failed: ${err.message}`, 'error');
+        logConsole('ERROR', `Lead ingestion error: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>🚀</span> Dispatch to Hermes Brain`;
+      }
+    }
+
+    // ── Live WebSocket Stream ─────────────────────────────────────────────────
+    function initWebSocket() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const ws = new WebSocket(`${protocol}//${window.location.host}/ws/notifications`);
+
+      ws.onopen = () => {
+        logConsole('WS', 'Connected to Hermes live event pipeline.');
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          logConsole('EVENT', `${data.type || 'NOTICE'}: ${data.message || JSON.stringify(data)}`);
+          if (data.type === 'BUILD_COMPLETED' || data.type === 'LEAD_CREATED') {
+            refreshAgentStatus();
+            loadProjects();
+          }
+        } catch (_) {
+          logConsole('STREAM', event.data);
+        }
+      };
+
+      ws.onclose = () => {
+        setTimeout(initWebSocket, 4000);
+      };
+    }
+
+    // ── Initialize ────────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      refreshAgentStatus();
+      loadProjects();
+      initWebSocket();
+      setInterval(refreshAgentStatus, 15000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Production runtime dependencies
+# L-2 Fix: Use ~= (compatible release) to prevent silent major-version breakage
+# H-1 Fix: Test dependencies (pytest-httpx, pytest, etc.) moved to requirements-dev.txt
+
+fastapi~=0.115.0
+uvicorn[standard]~=0.32.0
+sqlalchemy~=2.0.36
+aiosqlite~=0.20.0
+pydantic~=2.10.0
+pydantic-settings~=2.6.0
+httpx~=0.28.0
+python-dotenv~=1.0.1
+websockets~=13.1
+python-multipart~=0.0.17
+jinja2~=3.1.4
+reportlab~=4.0.0
+slowapi~=0.1.9         # H-5 Fix: rate limiting to prevent lead/webhook flooding

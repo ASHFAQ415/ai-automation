@@ -1,0 +1,54 @@
+# Environment and Secrets
+.env
+.env.*
+!.env.example
+hermes/.env
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.venv/
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+backend/ai_automation.db
+backend/ai_automation.db-wal
+backend/ai_automation.db-shm
+
+# Deployment and Temporary
+.vercel
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+projects/*/
+!projects/.gitkeep
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

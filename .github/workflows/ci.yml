@@ -1,0 +1,88 @@
+name: Hermes CI & Security Verification Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  lint-and-format:
+    name: Lint & Static Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Linting Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff bandit
+
+      - name: Run Ruff Linter
+        run: |
+          ruff check backend/app
+
+      - name: Run Bandit AST Security Scan
+        run: |
+          bandit -r backend/app -x "backend/tests" -ll
+
+  security-sast-trivy:
+    name: Semgrep SAST & Trivy Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep SAST
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: .semgrep.yml
+        continue-on-error: true
+
+      - name: Run Trivy Vulnerability Scanner (Filesystem & Dependencies)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          config: 'trivy.yaml'
+          severity: 'CRITICAL,HIGH'
+        continue-on-error: true
+
+  build-and-test:
+    name: Compilation & Acceptance Suite (with pytest-httpx)
+    runs-on: ubuntu-latest
+    env:
+      TEST_MODE: "true"
+      LOG_FORMAT: "json"
+      API_SECRET_KEY: "ci-secret-key-12345"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install pytest pytest-asyncio pytest-httpx httpx
+
+      - name: Verify Python Compilation
+        run: |
+          python -m compileall backend/app
+
+      - name: Execute Full Pytest Suite
+        run: |
+          cd backend
+          python -m pytest tests/ -v --durations=10

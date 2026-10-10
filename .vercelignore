@@ -1,0 +1,15 @@
+# Exclude heavy local backend and internal files
+hermes/
+backend/
+projects/
+__pycache__/
+*.pyc
+*.bat
+.venv/
+node_modules/
+.git/
+.env
+ARCHITECTURAL_GRAPH.md
+AGENTS.md
+IMPLEMENTATION_PLAN*.md
+whatsapp_qr.html

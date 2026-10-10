@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous AI Lead & Project Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <div class="luxury-app">
+    <!-- Executive Top Header -->
+    <header class="luxury-header">
+      <div class="header-left">
+        <div class="luxury-logo">
+          <div class="logo-ring"></div>
+          <span class="logo-emoji">⚡</span>
+        </div>
+        <div class="logo-text">
+          <h1>ANTIGRAVITY <span class="badge-pro">ENTERPRISE</span></h1>
+          <p>Autonomous AI Lead-to-Sales & Project Engine</p>
+        </div>
+      </div>
+
+      <!-- 3 Consolidated Navigation Tabs -->
+      <nav class="luxury-tabs">
+        <button class="lux-tab active" data-view="demo" onclick="switchView('demo', this)">
+          <span class="tab-icon">📱</span> Interactive Live Pitch
+        </button>
+        <button class="lux-tab" data-view="pipeline" onclick="switchView('pipeline', this)">
+          <span class="tab-icon">📋</span> Deal Pipeline & Approvals
+          <span class="tab-counter" id="nav-pending-count">0</span>
+        </button>
+        <button class="lux-tab" data-view="deliverables" onclick="switchView('deliverables', this)">
+          <span class="tab-icon">💎</span> Turnkey Deliverables
+          <span class="tab-counter counter-success" id="nav-built-count">0</span>
+        </button>
+      </nav>
+
+      <div class="header-right" style="display: flex; align-items: center; gap: 12px;">
+        <a href="/brain" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 10px; background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(0,242,254,0.2)); border: 1px solid #00f2fe; color: #fff; text-decoration: none; font-size: 0.78rem; font-weight: 700; box-shadow: 0 0 12px rgba(0,242,254,0.25);">
+          <span>🧠</span> Hermes Brain Hub
+        </a>
+        <div class="system-status-pill">
+          <span class="pulse-beacon"></span>
+          <span class="status-txt">Qwen3 4B (RTX 3050 GPU) · Telegram · WhatsApp Live</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI Metric Cards Bar -->
+    <section class="kpi-strip">
+      <div class="kpi-item">
+        <span class="kpi-title">TOTAL LEADS CAPTURED</span>
+        <div class="kpi-num" id="stat-total">0</div>
+        <span class="kpi-hint">Omnichannel Ingestion</span>
+      </div>
+      <div class="kpi-item kpi-glow-coral">
+        <span class="kpi-title">HOT DEALS QUALIFIED 🔥</span>
+        <div class="kpi-num text-coral" id="stat-hot">0</div>
+        <span class="kpi-hint">High Intent & Budget</span>
+      </div>
+      <div class="kpi-item kpi-glow-amber">
+        <span class="kpi-title">APPROVALS READY</span>
+        <div class="kpi-num text-amber" id="stat-pending">0</div>
+        <span class="kpi-hint">Human-in-the-Loop</span>
+      </div>
+      <div class="kpi-item kpi-glow-emerald">
+        <span class="kpi-title">AUTONOMOUS BUILDS</span>
+        <div class="kpi-num text-emerald" id="stat-built">0</div>
+        <span class="kpi-hint">100% Functional Code</span>
+      </div>
+      <div class="kpi-item kpi-glow-cyan">
+        <span class="kpi-title">PIPELINE CONTRACT VALUE</span>
+        <div class="kpi-num text-cyan" id="stat-pipeline">₹0</div>
+        <span class="kpi-hint">Estimated Deal Revenue</span>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 1: Interactive Live Pitch & Phone Simulator                  -->
+    <!-- ================================================================= -->
+    <section id="view-demo" class="view-panel active">
+      <!-- Pitch Presets Banner -->
+      <div class="preset-banner">
+        <div class="preset-header">
+          <span class="preset-tag">CLIENT MEETING DEMO PRESETS</span>
+          <p>Click any high-ticket business template below to simulate a live customer interaction on the phone:</p>
+        </div>
+        <div class="preset-pills">
+          <button class="preset-chip" onclick="loadPreset('real_estate', this)">
+            🏢 <strong>Luxury Real Estate</strong> Inbound
+          </button>
+          <button class="preset-chip" onclick="loadPreset('coaching', this)">
+            🎓 <strong>EdTech Academy</strong> Inbound
+          </button>
+          <button class="preset-chip" onclick="loadPreset('clinic', this)">
+            🏥 <strong>Healthcare Clinic</strong> Inbound
+          </button>
+          <button class="preset-chip" onclick="loadPreset('ecommerce', this)">
+            🛍️ <strong>D2C Brand</strong> Inbound
+          </button>
+        </div>
+      </div>
+
+      <!-- Split Screen: Phone Mockup on Left + AI Radar on Right -->
+      <div class="pitch-split">
+        <!-- Smartphone Mockup -->
+        <div class="phone-column">
+          <div class="smartphone-frame">
+            <div class="phone-notch">
+              <span class="camera-lens"></span>
+              <span class="speaker-grill"></span>
+            </div>
+            <div class="phone-status-bar">
+              <span class="phone-time">14:15</span>
+              <span class="phone-icons">5G 📶 100% 🔋</span>
+            </div>
+            
+            <!-- WhatsApp Chat UI Header -->
+            <div class="wa-header">
+              <div class="wa-avatar">🤖</div>
+              <div class="wa-contact-info">
+                <h4 id="sim-bot-name">AI Business Concierge</h4>
+                <span class="wa-status-text">Online · 24/7 Automated Qualification</span>
+              </div>
+            </div>
+
+            <!-- WhatsApp Chat Messages Body -->
+            <div class="wa-chat-body" id="wa-messages">
+              <div class="wa-bubble incoming">
+                <p>Hello! Welcome to our automated business concierge. Send your requirements or click any demo preset to begin.</p>
+                <span class="wa-time">14:15</span>
+              </div>
+            </div>
+
+            <!-- WhatsApp Chat Input Area -->
+            <form class="wa-input-bar" onsubmit="sendPhoneMessage(event)">
+              <input type="text" id="sim-message-input" placeholder="Type customer message or requirement..." required>
+              <button type="submit" class="wa-send-btn">➤</button>
+            </form>
+          </div>
+          <div class="phone-caption">
+            💡 <em>Live Simulator:</em> Type any lead query or select an industry preset to qualify in real time.
+          </div>
+        </div>
+
+        <!-- AI Intelligence & Qualification Radar -->
+        <div class="radar-column">
+          <div class="radar-card" id="radar-live-card">
+            <div class="radar-header">
+              <div class="radar-badge">
+                <span class="pulse-dot"></span> REAL-TIME AI QUALIFICATION RADAR
+              </div>
+              <div id="radar-score-pill" class="score-pill-placeholder">Awaiting Inbound Prospect...</div>
+            </div>
+
+            <div class="radar-body">
+              <div class="lead-summary-box">
+                <div class="sum-row">
+                  <span class="sum-label">PROSPECT NAME:</span>
+                  <strong id="radar-name">—</strong>
+                </div>
+                <div class="sum-row">
+                  <span class="sum-label">COMPANY:</span>
+                  <strong id="radar-company">—</strong>
+                </div>
+                <div class="sum-row">
+                  <span class="sum-label">BUDGET ESTIMATE:</span>
+                  <strong id="radar-budget" class="text-cyan">—</strong>
+                </div>
+                <div class="sum-row">
+                  <span class="sum-label">URGENCY & TIMELINE:</span>
+                  <strong id="radar-timeline" class="text-amber">—</strong>
+                </div>
+              </div>
+
+              <!-- AI Analysis Output Box -->
+              <div class="ai-rationale-box">
+                <h5>AI COMMERCIAL INTENT ANALYSIS (Qwen3 4B)</h5>
+                <p id="radar-rationale">
+                  Awaiting inbound prospect message. Connect your social channels (WhatsApp, Telegram, Discord, Webhook) or submit a message in the phone simulator to run live local qualification.
+                </p>
+              </div>
+
+              <!-- Instant Architecture & Features Preview -->
+              <div class="blueprint-preview-box">
+                <h5>AUTONOMOUSLY DRAFTED DELIVERABLE BLUEPRINT</h5>
+                <div class="blueprint-deliverable-title" id="radar-blueprint-title">
+                  📦 Awaiting Deal Qualification
+                </div>
+                <ul class="blueprint-features" id="radar-features">
+                  <li style="color: var(--text-dim);">Live architecture blueprint will be drafted by Qwen3 4B upon qualification</li>
+                </ul>
+              </div>
+
+              <div class="radar-actions">
+                <button class="btn-pitch-primary" id="btn-radar-action" onclick="proceedToApprovalFromRadar()" style="display: none;">
+                  📋 View Implementation Plan & Approve Build ➔
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 2: Deal Pipeline & Human-in-the-Loop Approvals               -->
+    <!-- ================================================================= -->
+    <section id="view-pipeline" class="view-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Deal Pipeline & Approval Stages</h2>
+          <p>Review AI-generated implementation plans and authorize autonomous project construction.</p>
+        </div>
+        <div class="pipeline-legend">
+          <span class="legend-item"><span class="dot-coral"></span> Stage 1: Plan Review</span>
+          <span class="legend-item"><span class="dot-emerald"></span> Stage 2: Ready to Build</span>
+        </div>
+      </div>
+
+      <div class="approvals-container" id="approvals-list">
+        <div class="empty-state">Loading active deal pipeline...</div>
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- VIEW 3: Turnkey Client Deliverables & Commercial Packages         -->
+    <!-- ================================================================= -->
+    <section id="view-deliverables" class="view-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Turnkey Client Deliverables & Commercial ROI</h2>
+          <p>Complete, functional software built by the autonomous engine. Ready to demonstrate and sell.</p>
+        </div>
+      </div>
+
+      <div class="deliverables-grid" id="deliverables-list">
+        <div class="empty-state">Loading built client projects...</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Code Viewer Modal -->
+  <div id="file-modal" class="modal-backdrop" onclick="closeFileModal(event)">
+    <div class="modal-window" onclick="event.stopPropagation()">
+      <div class="modal-top">
+        <div class="file-meta">
+          <span class="file-icon">📄</span>
+          <h3 id="modal-filename">main.py</h3>
+          <span id="modal-filesize" class="badge-filesize">0 bytes</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeFileModal()">✕</button>
+      </div>
+      <div class="modal-content">
+        <pre><code id="modal-code">Loading code...</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

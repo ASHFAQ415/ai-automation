@@ -1,0 +1,25 @@
+# Trivy Security Scanner Configuration — Hermes Platform
+scan:
+  security-checks:
+    - vuln
+    - secret
+    - config
+  file-patterns:
+    - 'requirements.txt'
+
+severity:
+  - CRITICAL
+  - HIGH
+
+vulnerability:
+  type:
+    - os
+    - library
+
+secret:
+  enable: true
+
+format: table
+exit-code: 0
+ignore-unfixed: true
+timeout: 5m

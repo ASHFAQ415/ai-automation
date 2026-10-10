@@ -1,0 +1,10 @@
+{
+  "name": "ashfaq-ai-automation-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Mohd Ashfaq - AI Automation & Integration Portfolio with Hermes Agent Dispatcher",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "dependencies": {}
+}
